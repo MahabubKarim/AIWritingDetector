@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Document shape -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M32,24h32l12,12v48c0,2.2 -1.8,4 -4,4H32c-2.2,0 -4,-1.8 -4,-4V28c0,-2.2 1.8,-4 4,-4z"/>
+    
+    <!-- Folded corner -->
+    <path
+        android:fillColor="#E8E4DE"
+        android:pathData="M64,24v12h12z"/>
+    
+    <!-- Text lines -->
+    <path
+        android:fillColor="#2A9D8F"
+        android:pathData="M36,48h28v3h-28z"/>
+    <path
+        android:fillColor="#B5AEA4"
+        android:pathData="M36,56h36v2h-36z"/>
+    <path
+        android:fillColor="#B5AEA4"
+        android:pathData="M36,62h36v2h-36z"/>
+    <path
+        android:fillColor="#B5AEA4"
+        android:pathData="M36,68h24v2h-24z"/>
+    
+    <!-- AI indicator circle -->
+    <path
+        android:fillColor="#E07A5F"
+        android:pathData="M68,72m-8,0a8,8 0,1 1,16 0a8,8 0,1 1,-16 0"/>
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M65,70l2,4l4,-6"
+        android:strokeWidth="1.5"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"/>
+</vector>
