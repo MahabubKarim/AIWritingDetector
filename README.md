@@ -15,10 +15,7 @@ A Kotlin Multiplatform (KMP) application that analyzes text to determine the lik
 - **Elegant UI**: Editorial-inspired design with warm color palette
 
 ## Screenshots
-![Screenshot of the app](arts/1.jpeg)
-![Screenshot of the app](arts/2.jpeg)
-![Screenshot of the app](arts/3.jpeg)
-![Screenshot of the app](arts/4.jpeg)
+![Screenshot of the app](arts/1.jpeg) ![Screenshot of the app](arts/2.jpeg) ![Screenshot of the app](arts/3.jpeg) ![Screenshot of the app](arts/4.jpeg)
 ![Screenshot of the app](arts/5.jpeg)
 ![Screenshot of the app](arts/6.jpeg)
 
