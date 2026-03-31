@@ -180,7 +180,7 @@ fun VerdictCard(
 ) {
     val (bgColor, borderColor) = when (verdict) {
         Verdict.LIKELY_HUMAN -> AppColors.HumanGreenBg to AppColors.HumanGreen
-        Verdict.POSSIBLY_HUMAN -> AppColors.HumanGreenBg.copy(alpha = 0.3f) to AppColors.HumanGreen.copy(alpha = 0.6f)
+        Verdict.POSSIBLY_HUMAN -> AppColors.HumanGreenBg.copy(alpha = 0.6f) to AppColors.HumanGreen.copy(alpha = 0.6f)
         Verdict.INCONCLUSIVE -> AppColors.NeutralBlueBg to AppColors.NeutralBlue
         Verdict.POSSIBLY_AI -> AppColors.AIAmberBg.copy(alpha = 0.6f) to AppColors.AIAmber.copy(alpha = 0.6f)
         Verdict.LIKELY_AI -> AppColors.AIAmberBg to AppColors.AIAmber
@@ -302,7 +302,7 @@ fun SignalCard(
                         verticalAlignment = Alignment.Top
                     ) {
                         Text(
-                            text = " • ",
+                            text = "→",
                             style = AppTypography.bodySmall,
                             color = signalColor
                         )
@@ -561,4 +561,111 @@ fun AnalyzingIndicator(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
+}
+
+/**
+ * Overloaded VerdictCard for History screen (score + confidence, summary shown in card).
+ */
+@Composable
+fun VerdictCard(
+    verdict: Verdict,
+    score: Double,
+    confidence: Double,
+    modifier: Modifier = Modifier
+) {
+    val (bgColor, borderColor) = when (verdict) {
+        Verdict.LIKELY_HUMAN -> AppColors.HumanGreenBg to AppColors.HumanGreen
+        Verdict.POSSIBLY_HUMAN -> AppColors.HumanGreenBg.copy(alpha = 0.6f) to AppColors.HumanGreen.copy(alpha = 0.6f)
+        Verdict.INCONCLUSIVE -> AppColors.NeutralBlueBg to AppColors.NeutralBlue
+        Verdict.POSSIBLY_AI -> AppColors.AIAmberBg.copy(alpha = 0.6f) to AppColors.AIAmber.copy(alpha = 0.6f)
+        Verdict.LIKELY_AI -> AppColors.AIAmberBg to AppColors.AIAmber
+    }
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(bgColor)
+            .border(1.dp, borderColor.copy(alpha = 0.3f), RoundedCornerShape(16.dp))
+            .padding(20.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(10.dp)
+                        .clip(CircleShape)
+                        .background(borderColor)
+                )
+                Text(
+                    text = verdict.label,
+                    style = AppTypography.headlineMedium,
+                    color = borderColor
+                )
+            }
+
+            Text(
+                text = "${(score * 100).toInt()}%",
+                style = AppTypography.headlineLarge,
+                color = borderColor,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = "Confidence:",
+                style = AppTypography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            LinearProgressIndicator(
+                progress = { confidence.toFloat() },
+                modifier = Modifier
+                    .weight(1f)
+                    .height(6.dp)
+                    .clip(RoundedCornerShape(3.dp)),
+                color = borderColor,
+                trackColor = borderColor.copy(alpha = 0.2f)
+            )
+            Text(
+                text = "${(confidence * 100).toInt()}%",
+                style = AppTypography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+/**
+ * Overloaded StatsGrid for simple stats display.
+ */
+@Composable
+fun StatsGrid(
+    wordCount: Int,
+    sentenceCount: Int,
+    uniqueWordRatio: Double,
+    avgWordsPerSentence: Double,
+    modifier: Modifier = Modifier
+) {
+    StatsGrid(
+        items = listOf(
+            "Words" to wordCount.toString(),
+            "Sentences" to sentenceCount.toString(),
+            "Avg. Words/Sentence" to "%.1f".format(avgWordsPerSentence),
+            "Vocabulary Diversity" to "%.0f%%".format(uniqueWordRatio * 100)
+        ),
+        modifier = modifier
+    )
 }

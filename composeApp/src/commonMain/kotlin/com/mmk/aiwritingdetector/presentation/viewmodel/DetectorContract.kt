@@ -11,6 +11,8 @@ data class DetectorState(
     val textStats: TextStats? = null,
     val analysisResult: AnalysisResult? = null,
     val isAnalyzing: Boolean = false,
+    val isSaving: Boolean = false,
+    val isSaved: Boolean = false,
     val error: String? = null,
     val showResults: Boolean = false
 ) {
@@ -18,6 +20,9 @@ data class DetectorState(
         get() = inputText.isNotBlank() &&
                 (textStats?.wordCount ?: 0) >= 10 &&
                 !isAnalyzing
+
+    val canSave: Boolean
+        get() = analysisResult != null && !isSaving && !isSaved
 
     val wordCount: Int
         get() = textStats?.wordCount ?: 0
@@ -31,10 +36,12 @@ data class DetectorState(
  */
 sealed interface DetectorIntent {
     data class UpdateText(val text: String) : DetectorIntent
-    object Analyze : DetectorIntent
-    object ClearResults : DetectorIntent
-    object ClearError : DetectorIntent
-    object ClearAll : DetectorIntent
+    data object Analyze : DetectorIntent
+    data object SaveToHistory : DetectorIntent
+    data object ClearResults : DetectorIntent
+    data object ClearError : DetectorIntent
+    data object ClearAll : DetectorIntent
+    data object NavigateToHistory : DetectorIntent
 }
 
 /**
@@ -42,6 +49,8 @@ sealed interface DetectorIntent {
  */
 sealed interface DetectorEffect {
     data class ShowError(val message: String) : DetectorEffect
-    object ScrollToResults : DetectorEffect
-    object AnalysisComplete : DetectorEffect
+    data object ScrollToResults : DetectorEffect
+    data object AnalysisComplete : DetectorEffect
+    data object SavedToHistory : DetectorEffect
+    data object NavigateToHistory : DetectorEffect
 }

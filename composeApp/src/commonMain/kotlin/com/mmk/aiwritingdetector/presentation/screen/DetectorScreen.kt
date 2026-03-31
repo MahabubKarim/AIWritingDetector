@@ -5,19 +5,28 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.mmk.aiwritingdetector.domain.model.AnalysisResult
 import com.mmk.aiwritingdetector.presentation.components.*
+import com.mmk.aiwritingdetector.presentation.theme.AppColors
 import com.mmk.aiwritingdetector.presentation.theme.AppTypography
+import com.mmk.aiwritingdetector.presentation.viewmodel.DetectorEffect
 import com.mmk.aiwritingdetector.presentation.viewmodel.DetectorIntent
 import com.mmk.aiwritingdetector.presentation.viewmodel.DetectorState
 import com.mmk.aiwritingdetector.presentation.viewmodel.DetectorViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -32,12 +41,24 @@ class DetectorScreen : Screen {
         val state by viewModel.state.collectAsState()
         val scrollState = rememberScrollState()
         val coroutineScope = rememberCoroutineScope()
+        val navigator = LocalNavigator.currentOrThrow
 
-        // Handle scroll to results effect
-        LaunchedEffect(state.showResults) {
-            if (state.showResults && state.analysisResult != null) {
-                coroutineScope.launch {
-                    scrollState.animateScrollTo(scrollState.maxValue)
+        // Handle effects
+        LaunchedEffect(Unit) {
+            viewModel.effects.collectLatest { effect ->
+                when (effect) {
+                    is DetectorEffect.ScrollToResults -> {
+                        coroutineScope.launch {
+                            scrollState.animateScrollTo(scrollState.maxValue)
+                        }
+                    }
+                    is DetectorEffect.NavigateToHistory -> {
+                        navigator.push(HistoryScreen())
+                    }
+                    is DetectorEffect.SavedToHistory -> {
+                        // Could show snackbar
+                    }
+                    else -> {}
                 }
             }
         }
@@ -56,59 +77,67 @@ private fun DetectorContent(
     onIntent: (DetectorIntent) -> Unit,
     scrollState: androidx.compose.foundation.ScrollState
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .verticalScroll(scrollState)
-            .padding(horizontal = 24.dp)
-            .padding(bottom = 32.dp)
-            .windowInsetsPadding(WindowInsets.safeDrawing),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(48.dp))
-
-        // Hero header
-        HeaderSection()
-
-        Spacer(modifier = Modifier.height(40.dp))
-
-        // Input section
-        InputSection(
-            text = state.inputText,
-            onTextChange = { onIntent(DetectorIntent.UpdateText(it)) },
-            characterCount = state.characterCount,
-            wordCount = state.wordCount,
-            canAnalyze = state.canAnalyze,
-            isAnalyzing = state.isAnalyzing,
-            onAnalyze = { onIntent(DetectorIntent.Analyze) },
-            onClear = { onIntent(DetectorIntent.ClearAll) },
-            error = state.error
-        )
-
-        // Analyzing state
-        AnimatedVisibility(
-            visible = state.isAnalyzing,
-            enter = fadeIn() + expandVertically(),
-            exit = fadeOut() + shrinkVertically()
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .verticalScroll(scrollState)
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 32.dp)
+                .windowInsetsPadding(WindowInsets.safeDrawing),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column {
-                Spacer(modifier = Modifier.height(48.dp))
-                AnalyzingIndicator()
-            }
-        }
+            Spacer(modifier = Modifier.height(48.dp))
 
-        // Results section
-        AnimatedVisibility(
-            visible = state.showResults && state.analysisResult != null,
-            enter = fadeIn(animationSpec = tween(400)) +
-                    expandVertically(animationSpec = tween(500)),
-            exit = fadeOut() + shrinkVertically()
-        ) {
-            state.analysisResult?.let { result ->
+            // Hero header
+            HeaderSection(onHistoryClick = { onIntent(DetectorIntent.NavigateToHistory) })
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            // Input section
+            InputSection(
+                text = state.inputText,
+                onTextChange = { onIntent(DetectorIntent.UpdateText(it)) },
+                characterCount = state.characterCount,
+                wordCount = state.wordCount,
+                canAnalyze = state.canAnalyze,
+                isAnalyzing = state.isAnalyzing,
+                onAnalyze = { onIntent(DetectorIntent.Analyze) },
+                onClear = { onIntent(DetectorIntent.ClearAll) },
+                error = state.error
+            )
+
+            // Analyzing state
+            AnimatedVisibility(
+                visible = state.isAnalyzing,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
+            ) {
                 Column {
                     Spacer(modifier = Modifier.height(48.dp))
-                    ResultsSection(result = result)
+                    AnalyzingIndicator()
+                }
+            }
+
+            // Results section
+            AnimatedVisibility(
+                visible = state.showResults && state.analysisResult != null,
+                enter = fadeIn(animationSpec = tween(400)) +
+                        expandVertically(animationSpec = tween(500)),
+                exit = fadeOut() + shrinkVertically()
+            ) {
+                state.analysisResult?.let { result ->
+                    Column {
+                        Spacer(modifier = Modifier.height(48.dp))
+                        ResultsSection(
+                            result = result,
+                            canSave = state.canSave,
+                            isSaving = state.isSaving,
+                            isSaved = state.isSaved,
+                            onSave = { onIntent(DetectorIntent.SaveToHistory) }
+                        )
+                    }
                 }
             }
         }
@@ -116,10 +145,32 @@ private fun DetectorContent(
 }
 
 @Composable
-private fun HeaderSection() {
+private fun HeaderSection(onHistoryClick: () -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            FilledTonalButton(
+                onClick = onHistoryClick,
+                colors = ButtonDefaults.filledTonalButtonColors(
+                    containerColor = AppColors.Cream
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.History,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("History")
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         Text(
             text = "AI Writing",
             style = AppTypography.displayLarge,
@@ -228,7 +279,13 @@ private fun InputSection(
 }
 
 @Composable
-private fun ResultsSection(result: AnalysisResult) {
+private fun ResultsSection(
+    result: AnalysisResult,
+    canSave: Boolean,
+    isSaving: Boolean,
+    isSaved: Boolean,
+    onSave: () -> Unit
+) {
     Column(
         modifier = Modifier.widthIn(max = 720.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -251,6 +308,14 @@ private fun ResultsSection(result: AnalysisResult) {
             verdict = result.verdict,
             summary = result.summary,
             confidence = result.confidence
+        )
+
+        // Save button
+        SaveToHistoryButton(
+            canSave = canSave,
+            isSaving = isSaving,
+            isSaved = isSaved,
+            onSave = onSave
         )
 
         // Text Statistics
@@ -297,13 +362,53 @@ private fun ResultsSection(result: AnalysisResult) {
 }
 
 @Composable
+private fun SaveToHistoryButton(
+    canSave: Boolean,
+    isSaving: Boolean,
+    isSaved: Boolean,
+    onSave: () -> Unit
+) {
+    Button(
+        onClick = onSave,
+        enabled = canSave && !isSaving && !isSaved,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (isSaved) AppColors.HumanGreen else AppColors.Teal,
+            disabledContainerColor = if (isSaved) AppColors.HumanGreen.copy(alpha = 0.8f) else AppColors.Stone.copy(alpha = 0.3f)
+        ),
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        if (isSaving) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(20.dp),
+                color = MaterialTheme.colorScheme.onPrimary,
+                strokeWidth = 2.dp
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Saving...")
+        } else if (isSaved) {
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+                tint = MaterialTheme.colorScheme.onPrimary
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Saved to History", color = MaterialTheme.colorScheme.onPrimary)
+        } else {
+            Text("Save to History")
+        }
+    }
+}
+
+@Composable
 private fun PatternDetailsCard(result: AnalysisResult) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(
                 MaterialTheme.colorScheme.surfaceVariant,
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp)
             )
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)

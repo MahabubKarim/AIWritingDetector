@@ -32,7 +32,7 @@ object AppColors {
 
     // Semantic Colors
     val HumanGreen = Color(0xFF4A9F6E)
-    val HumanGreenBg = Color(0xffcfefdb)
+    val HumanGreenBg = Color(0xFFE8F5ED)
     val AIAmber = Color(0xFFD4A03A)
     val AIAmberBg = Color(0xFFFDF6E3)
     val NeutralBlue = Color(0xFF6B8CAE)
@@ -197,7 +197,7 @@ object AppTypography {
 
     // Special styles
     val mono = TextStyle(
-        fontFamily = FontFamily.SansSerif,
+        fontFamily = FontFamily.Monospace,
         fontWeight = FontWeight.Normal,
         fontSize = 13.sp,
         lineHeight = 20.sp,

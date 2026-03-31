@@ -1,8 +1,22 @@
 package com.mmk.aiwritingdetector.domain.analyzer
 
 /**
- * Pattern dictionaries for detecting AI writing characteristics.
- * These patterns are based on linguistic research and empirical observation.
+ * Comprehensive pattern dictionaries for detecting AI writing characteristics.
+ * 
+ * Based on:
+ * - Pearson PTE AuDITR (Automated Detection of Inauthentic Templated Responses) research
+ * - GPTZero, Turnitin, Copyleaks, Originality.ai detection methods
+ * - Pangram Labs linguistic research
+ * - Academic studies on perplexity/burstiness metrics
+ * - Wikipedia AI writing signs documentation
+ * 
+ * Detection approaches covered:
+ * 1. Perplexity - word-level predictability
+ * 2. Burstiness - sentence length/complexity variation
+ * 3. Template/memorized content detection
+ * 4. Structural regularity analysis
+ * 5. Token probability distribution
+ * 6. Vocabulary patterns (era-specific AI words)
  */
 object PatternDictionaries {
 
@@ -537,7 +551,7 @@ object PatternDictionaries {
      */
     val allAiVocabulary: List<String> by lazy {
         (gpt4EraWords + modernAiWords + aiOverusedNouns +
-                aiOverusedVerbs + aiOverusedAdjectives + aiOverusedAdverbs)
+         aiOverusedVerbs + aiOverusedAdjectives + aiOverusedAdverbs)
             .distinct()
     }
 
@@ -597,8 +611,8 @@ object PatternDictionaries {
      * All templates combined for comprehensive template detection.
      */
     val allTemplates: List<String> by lazy {
-        (pteDescribeImageTemplates + pteRetellLectureTemplates +
-                pteEssayTemplates + formulaicOpenings + conclusionTelegraphs)
+        (pteDescribeImageTemplates + pteRetellLectureTemplates + 
+         pteEssayTemplates + formulaicOpenings + conclusionTelegraphs)
             .distinct()
     }
 }

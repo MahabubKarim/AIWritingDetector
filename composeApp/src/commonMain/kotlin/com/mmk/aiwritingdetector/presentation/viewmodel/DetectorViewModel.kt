@@ -3,6 +3,7 @@ package com.mmk.aiwritingdetector.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mmk.aiwritingdetector.domain.usecase.AnalyzeTextUseCase
+import com.mmk.aiwritingdetector.domain.usecase.SaveAnalysisUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -11,7 +12,8 @@ import kotlinx.coroutines.launch
  * ViewModel implementing MVI pattern for the detector screen.
  */
 class DetectorViewModel(
-    private val analyzeTextUseCase: AnalyzeTextUseCase
+    private val analyzeTextUseCase: AnalyzeTextUseCase,
+    private val saveAnalysisUseCase: SaveAnalysisUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(DetectorState())
@@ -27,9 +29,11 @@ class DetectorViewModel(
         when (intent) {
             is DetectorIntent.UpdateText -> updateText(intent.text)
             is DetectorIntent.Analyze -> analyze()
+            is DetectorIntent.SaveToHistory -> saveToHistory()
             is DetectorIntent.ClearResults -> clearResults()
             is DetectorIntent.ClearError -> clearError()
             is DetectorIntent.ClearAll -> clearAll()
+            is DetectorIntent.NavigateToHistory -> navigateToHistory()
         }
     }
 
@@ -39,7 +43,8 @@ class DetectorViewModel(
             currentState.copy(
                 inputText = text,
                 textStats = stats,
-                error = null
+                error = null,
+                isSaved = false // Reset saved state when text changes
             )
         }
     }
@@ -48,7 +53,7 @@ class DetectorViewModel(
         val currentText = _state.value.inputText
 
         viewModelScope.launch {
-            _state.update { it.copy(isAnalyzing = true, error = null) }
+            _state.update { it.copy(isAnalyzing = true, error = null, isSaved = false) }
 
             val result = analyzeTextUseCase.execute(currentText)
 
@@ -77,11 +82,33 @@ class DetectorViewModel(
         }
     }
 
+    private fun saveToHistory() {
+        val currentState = _state.value
+        val result = currentState.analysisResult ?: return
+        val text = currentState.inputText
+
+        viewModelScope.launch {
+            _state.update { it.copy(isSaving = true) }
+
+            saveAnalysisUseCase.execute(text, result).fold(
+                onSuccess = {
+                    _state.update { it.copy(isSaving = false, isSaved = true) }
+                    _effects.send(DetectorEffect.SavedToHistory)
+                },
+                onFailure = { error ->
+                    _state.update { it.copy(isSaving = false) }
+                    _effects.send(DetectorEffect.ShowError(error.message ?: "Failed to save"))
+                }
+            )
+        }
+    }
+
     private fun clearResults() {
         _state.update {
             it.copy(
                 analysisResult = null,
-                showResults = false
+                showResults = false,
+                isSaved = false
             )
         }
     }
@@ -92,5 +119,11 @@ class DetectorViewModel(
 
     private fun clearAll() {
         _state.value = DetectorState()
+    }
+
+    private fun navigateToHistory() {
+        viewModelScope.launch {
+            _effects.send(DetectorEffect.NavigateToHistory)
+        }
     }
 }

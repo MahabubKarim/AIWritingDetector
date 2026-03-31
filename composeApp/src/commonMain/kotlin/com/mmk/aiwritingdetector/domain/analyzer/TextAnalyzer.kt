@@ -5,8 +5,16 @@ import kotlin.math.sqrt
 
 /**
  * Core text analyzer that detects AI writing patterns.
+ * 
+ * Detection methods based on:
+ * - Perplexity (word predictability)
+ * - Burstiness (sentence length variation)
+ * - Vocabulary patterns (AI-specific words)
+ * - Structural regularity (paragraph uniformity)
+ * - Template detection (PTE-specific patterns)
  */
 class TextAnalyzer {
+
     // Track detected patterns during analysis for evidence display
     private var detectedAiVocabulary = mutableListOf<String>()
     private var detectedHumanIndicators = mutableListOf<String>()
@@ -548,9 +556,9 @@ class TextAnalyzer {
                 description = "Personal expressions, colloquialisms, informal language",
                 score = humanScore,
                 weight = 0.07,
-                evidence = if (detectedHumanIndicators.isEmpty())
-                    listOf("None detected")
-                else
+                evidence = if (detectedHumanIndicators.isEmpty()) 
+                    listOf("None detected") 
+                else 
                     detectedHumanIndicators.take(3)
             )
         )
