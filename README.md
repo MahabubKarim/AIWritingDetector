@@ -15,7 +15,9 @@ A Kotlin Multiplatform (KMP) application that analyzes text to determine the lik
 - **Elegant UI**: Editorial-inspired design with warm color palette
 
 ## Screenshots
-<img src="arts/5.jpeg" width="200" height="100">
+<img src="arts/5.jpeg" width="200" height="300">
+<img src="arts/4.jpeg" width="200" height="300">
+<img src="arts/3.jpeg" width="200" height="300">
 [https://postimg.cc/gallery/56shNpJ](arts/5.jpeg) 
 [<img src="image.png" width="250"/>](arts/1.jpeg) 
 [<img src="image.png" width="250"/>](arts/2.jpeg) 
