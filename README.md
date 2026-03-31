@@ -16,7 +16,7 @@ A Kotlin Multiplatform (KMP) application that analyzes text to determine the lik
 
 ## Screenshots
 <img src="arts/5.jpeg" width="200" height="100">
-[<img src="image.png" width="250"/>](arts/5.jpeg) 
+[https://postimg.cc/gallery/56shNpJ](arts/5.jpeg) 
 [<img src="image.png" width="250"/>](arts/1.jpeg) 
 [<img src="image.png" width="250"/>](arts/2.jpeg) 
 [<img src="image.png" width="250"/>](arts/3.jpeg) 
