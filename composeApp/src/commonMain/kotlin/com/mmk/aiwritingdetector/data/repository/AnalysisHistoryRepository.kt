@@ -7,14 +7,13 @@ import com.mmk.aiwritingdetector.data.db.AnalysisHistoryEntity
 import com.mmk.aiwritingdetector.domain.model.AnalysisHistory
 import com.mmk.aiwritingdetector.domain.model.AnalysisResult
 import com.mmk.aiwritingdetector.domain.model.DetectionSignal
-import com.mmk.aiwritingdetector.domain.model.SignalData
 import com.mmk.aiwritingdetector.domain.model.Verdict
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Instant
 import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 /**
  * Repository for managing analysis history persistence.
@@ -28,9 +27,7 @@ class AnalysisHistoryRepository(
      * Get all history as a Flow.
      */
     fun getAllHistory(): Flow<List<AnalysisHistory>> {
-        return queries.selectAll()
-            .asFlow()
-            .mapToList<AnalysisHistoryEntity>(Dispatchers.Default)
+        return queries.selectAll().asFlow().mapToList<AnalysisHistoryEntity>(Dispatchers.Default)
             .map { entities -> entities.map { it.toDomain() } }
     }
 
@@ -46,13 +43,12 @@ class AnalysisHistoryRepository(
      */
     @OptIn(ExperimentalTime::class)
     suspend fun saveAnalysis(
-        fullText: String,
-        result: AnalysisResult
+        fullText: String, result: AnalysisResult
     ): Long = withContext(Dispatchers.Default) {
         val textPreview = fullText.take(100).let {
             if (fullText.length > 100) "$it..." else it
         }
-        
+
         val signalsJson = serializeSignals(result.signals)
         val now = kotlin.time.Clock.System.now()
 
@@ -68,7 +64,7 @@ class AnalysisHistoryRepository(
             signalsJson = signalsJson,
             createdAt = now.toEpochMilliseconds()
         )
-        
+
         // Return the last inserted ID
         queries.selectAll().executeAsList().firstOrNull()?.id ?: 0L
     }
@@ -97,9 +93,10 @@ class AnalysisHistoryRepository(
     /**
      * Search history by text.
      */
-    suspend fun searchByText(query: String): List<AnalysisHistory> = withContext(Dispatchers.Default) {
-        queries.searchByText(query).executeAsList().map { it.toDomain() }
-    }
+    suspend fun searchByText(query: String): List<AnalysisHistory> =
+        withContext(Dispatchers.Default) {
+            queries.searchByText(query).executeAsList().map { it.toDomain() }
+        }
 
     // ═══════════════════════════════════════════════════════════════════════════
     // MAPPING & SERIALIZATION
@@ -135,7 +132,7 @@ class AnalysisHistoryRepository(
 
     private fun deserializeSignals(json: String): List<DetectionSignal> {
         if (json.isBlank()) return emptyList()
-        
+
         return json.split(";;").mapNotNull { signalStr ->
             val parts = signalStr.split("||")
             if (parts.size >= 4) {

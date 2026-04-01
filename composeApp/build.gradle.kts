@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.googleServices)
     alias(libs.plugins.sqldelight)
 }
 
@@ -35,7 +36,6 @@ kotlin {
         browser {
             webpackTask {
                 mainOutputFileName.set("composeApp.js")
-                // config.resolve.fallback = "{ fs: false, path: false, crypto: false }"
             }
         }
         binaries.executable()
@@ -54,6 +54,12 @@ kotlin {
             implementation(libs.androidx.credentials)
             implementation(libs.androidx.credentials.play.services)
             implementation(libs.googleid)
+
+            // Firebase (Android only - BOM managed)
+            implementation(project.dependencies.platform(libs.firebase.bom))
+            implementation(libs.firebase.auth)
+            implementation(libs.firebase.firestore)
+            implementation(libs.firebase.analytics)
         }
 
         commonMain.dependencies {
