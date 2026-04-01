@@ -1,6 +1,5 @@
-@file:OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
-
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
@@ -8,6 +7,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.sqldelight)
 }
 
@@ -29,11 +29,13 @@ kotlin {
 
     jvm("desktop")
 
+    @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         outputModuleName = "composeApp"
         browser {
             webpackTask {
                 mainOutputFileName.set("composeApp.js")
+                // config.resolve.fallback = "{ fs: false, path: false, crypto: false }"
             }
         }
         binaries.executable()
@@ -41,27 +43,38 @@ kotlin {
 
     sourceSets {
         val desktopMain by getting
-        val wasmJsMain by getting
 
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
             implementation(libs.sqldelight.android.driver)
+            implementation(libs.ktor.client.okhttp)
             implementation(libs.koin.android)
+
+            // Google Sign-In
+            implementation(libs.androidx.credentials)
+            implementation(libs.androidx.credentials.play.services)
+            implementation(libs.googleid)
         }
 
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.materialIconsExtended)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+            implementation(libs.runtime)
+            implementation(libs.foundation)
+            implementation(libs.material3)
+            implementation(libs.compose.material.icons.extended)
+            implementation(libs.ui)
+            implementation(libs.components.resources)
+            implementation(libs.ui.tooling.preview)
 
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.serialization.json)
+
+            // Ktor
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
 
             // Koin
             implementation(libs.koin.core)
@@ -84,14 +97,19 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.sqldelight.sqlite.driver)
+            implementation(libs.ktor.client.okhttp)
         }
 
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)
+            implementation(libs.ktor.client.darwin)
         }
 
         wasmJsMain.dependencies {
             implementation(libs.sqldelight.web.worker.driver)
+            implementation(libs.ktor.client.js)
+            implementation(npm("@cashapp/sqldelight-sqljs-worker", "2.3.2"))
+            implementation(npm("sql.js", "1.12.0"))
         }
     }
 }

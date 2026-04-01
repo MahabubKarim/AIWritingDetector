@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mmk.aiwritingdetector.domain.model.DetectionSignal
 import com.mmk.aiwritingdetector.domain.model.Verdict
+import com.mmk.aiwritingdetector.domain.util.format
 import com.mmk.aiwritingdetector.presentation.theme.AppColors
 import com.mmk.aiwritingdetector.presentation.theme.AppTypography
 import kotlin.math.PI
@@ -663,8 +664,8 @@ fun StatsGrid(
         items = listOf(
             "Words" to wordCount.toString(),
             "Sentences" to sentenceCount.toString(),
-            "Avg. Words/Sentence" to "%.1f".format(avgWordsPerSentence),
-            "Vocabulary Diversity" to "%.0f%%".format(uniqueWordRatio * 100)
+            "Avg. Words/Sentence" to avgWordsPerSentence.format(1),
+            "Vocabulary Diversity" to "${(uniqueWordRatio * 100).format(0)}%"
         ),
         modifier = modifier
     )

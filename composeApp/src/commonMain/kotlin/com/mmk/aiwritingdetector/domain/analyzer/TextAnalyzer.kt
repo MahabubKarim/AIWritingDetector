@@ -1,6 +1,7 @@
 package com.mmk.aiwritingdetector.domain.analyzer
 
 import com.mmk.aiwritingdetector.domain.model.*
+import com.mmk.aiwritingdetector.domain.util.format
 import kotlin.math.sqrt
 
 /**
@@ -357,7 +358,7 @@ class TextAnalyzer {
                 description = "AI text tends to have uniform sentence lengths (low burstiness)",
                 score = uniformityScore,
                 weight = 0.12,
-                evidence = listOf("Standard deviation: %.1f words".format(sentences.sentenceLengthStdDev))
+                evidence = listOf("Standard deviation: ${sentences.sentenceLengthStdDev.format(1)} words")
             )
         )
 
@@ -426,7 +427,7 @@ class TextAnalyzer {
                 description = "Higher passive voice usage than typical human writing",
                 score = passiveScore,
                 weight = 0.06,
-                evidence = listOf("Ratio: %.0f%%".format(sentences.passiveVoiceRatio * 100))
+                evidence = listOf("Ratio: ${ (sentences.passiveVoiceRatio * 100).format(0) }%")
             )
         )
 
@@ -443,7 +444,7 @@ class TextAnalyzer {
                 description = "Low unique word ratio suggests repetitive vocabulary",
                 score = diversityScore,
                 weight = 0.08,
-                evidence = listOf("Unique word ratio: %.0f%%".format(stats.uniqueWordRatio * 100))
+                evidence = listOf("Unique word ratio: ${ (stats.uniqueWordRatio * 100).format(0) }%")
             )
         )
 

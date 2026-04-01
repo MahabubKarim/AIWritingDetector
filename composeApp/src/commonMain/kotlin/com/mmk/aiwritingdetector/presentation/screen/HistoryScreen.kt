@@ -27,6 +27,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.mmk.aiwritingdetector.domain.model.AnalysisHistory
 import com.mmk.aiwritingdetector.domain.model.Verdict
+import com.mmk.aiwritingdetector.domain.util.format
 import com.mmk.aiwritingdetector.presentation.components.*
 import com.mmk.aiwritingdetector.presentation.theme.AppColors
 import com.mmk.aiwritingdetector.presentation.viewmodel.HistoryEffect
@@ -157,9 +158,9 @@ private fun HistoryHeader(
                         tint = AppColors.Charcoal
                     )
                 }
-
+                
                 Spacer(modifier = Modifier.width(8.dp))
-
+                
                 Column {
                     Text(
                         text = "Analysis History",
@@ -254,7 +255,7 @@ private fun HistoryList(
                 onDelete = { onItemDelete(item) }
             )
         }
-
+        
         item {
             Spacer(modifier = Modifier.height(80.dp))
         }
@@ -301,9 +302,9 @@ private fun HistoryItemCard(
                         color = item.verdict.getColor()
                     )
                 }
-
+                
                 Spacer(modifier = Modifier.height(4.dp))
-
+                
                 Text(
                     text = item.verdict.getShortLabel(),
                     style = MaterialTheme.typography.labelSmall,
@@ -324,18 +325,18 @@ private fun HistoryItemCard(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
-
+                
                 Spacer(modifier = Modifier.height(8.dp))
-
+                
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     StatChip(label = "${item.wordCount} words")
                     StatChip(label = "${item.sentenceCount} sentences")
                 }
-
+                
                 Spacer(modifier = Modifier.height(4.dp))
-
+                
                 Text(
                     text = item.getFormattedDate(),
                     style = MaterialTheme.typography.labelSmall,
@@ -404,14 +405,14 @@ private fun HistoryDetailView(
                         tint = AppColors.Charcoal
                     )
                 }
-
+                
                 Text(
                     text = "Analysis Details",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = AppColors.Charcoal
                 )
-
+                
                 IconButton(onClick = onDelete) {
                     Icon(
                         imageVector = Icons.Default.Delete,
@@ -471,15 +472,15 @@ private fun HistoryDetailView(
 
             // Stats
             item {
-                val avgWordsPerSentence = if (item.sentenceCount > 0)
-                    item.wordCount.toDouble() / item.sentenceCount
+                val avgWordsPerSentence = if (item.sentenceCount > 0) 
+                    item.wordCount.toDouble() / item.sentenceCount 
                 else 0.0
-
+                    
                 StatsGrid(
                     items = listOf(
                         "Words" to item.wordCount.toString(),
                         "Sentences" to item.sentenceCount.toString(),
-                        "Avg. Words/Sentence" to "%.1f".format(avgWordsPerSentence),
+                        "Avg. Words/Sentence" to avgWordsPerSentence.format(1),
                         "AI Score" to "${item.getScorePercentage()}%"
                     )
                 )

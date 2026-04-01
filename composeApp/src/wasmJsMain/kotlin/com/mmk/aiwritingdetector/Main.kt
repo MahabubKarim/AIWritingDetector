@@ -6,6 +6,11 @@ import kotlinx.browser.document
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
+    // Initialize Koin
+/*    startKoin {
+        modules(webPlatformModule)
+    }*/
+
     ComposeViewport(document.body!!) {
         App()
     }

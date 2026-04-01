@@ -8,17 +8,24 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 
-fun main() = application {
-    val windowState = rememberWindowState(
-        size = DpSize(1024.dp, 768.dp),
-        position = WindowPosition(Alignment.Center)
-    )
+fun main() {
+    // Initialize Koin before application starts
+   /* startKoin {
+        modules(desktopPlatformModule)
+    }*/
 
-    Window(
-        onCloseRequest = ::exitApplication,
-        state = windowState,
-        title = "AI Writing Detector"
-    ) {
-        App()
+    application {
+        val windowState = rememberWindowState(
+            size = DpSize(1024.dp, 768.dp),
+            position = WindowPosition(Alignment.Center)
+        )
+
+        Window(
+            onCloseRequest = ::exitApplication,
+            state = windowState,
+            title = "AI Writing Detector"
+        ) {
+            App()
+        }
     }
 }

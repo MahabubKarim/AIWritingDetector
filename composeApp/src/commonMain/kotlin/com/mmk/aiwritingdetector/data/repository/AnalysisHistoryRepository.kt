@@ -13,8 +13,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlin.time.ExperimentalTime
 
 /**
  * Repository for managing analysis history persistence.
@@ -44,6 +44,7 @@ class AnalysisHistoryRepository(
     /**
      * Save analysis result to history.
      */
+    @OptIn(ExperimentalTime::class)
     suspend fun saveAnalysis(
         fullText: String,
         result: AnalysisResult
@@ -104,6 +105,7 @@ class AnalysisHistoryRepository(
     // MAPPING & SERIALIZATION
     // ═══════════════════════════════════════════════════════════════════════════
 
+    @OptIn(ExperimentalTime::class)
     private fun AnalysisHistoryEntity.toDomain(): AnalysisHistory {
         return AnalysisHistory(
             id = id,

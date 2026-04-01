@@ -19,6 +19,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.mmk.aiwritingdetector.domain.model.AnalysisResult
+import com.mmk.aiwritingdetector.domain.util.format
 import com.mmk.aiwritingdetector.presentation.components.*
 import com.mmk.aiwritingdetector.presentation.theme.AppColors
 import com.mmk.aiwritingdetector.presentation.theme.AppTypography
@@ -327,8 +328,8 @@ private fun ResultsSection(
                 "Words" to result.textStats.wordCount.toString(),
                 "Sentences" to result.textStats.sentenceCount.toString(),
                 "Paragraphs" to result.textStats.paragraphCount.toString(),
-                "Avg. Words/Sentence" to "%.1f".format(result.textStats.avgWordsPerSentence),
-                "Vocabulary Diversity" to "%.0f%%".format(result.textStats.uniqueWordRatio * 100)
+                "Avg. Words/Sentence" to result.textStats.avgWordsPerSentence.format(1),
+                "Vocabulary Diversity" to "${(result.textStats.uniqueWordRatio * 100).format(0)}%"
             )
         )
 
