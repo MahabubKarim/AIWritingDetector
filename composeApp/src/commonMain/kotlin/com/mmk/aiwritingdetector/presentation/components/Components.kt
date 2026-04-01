@@ -5,6 +5,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -92,6 +93,7 @@ fun ScoreGauge(
     modifier: Modifier = Modifier,
     size: Dp = 200.dp
 ) {
+    val darkTheme = isSystemInDarkTheme()
     val animatedScore by animateFloatAsState(
         targetValue = score.toFloat(),
         animationSpec = tween(
@@ -102,9 +104,9 @@ fun ScoreGauge(
     )
 
     val gaugeColor = when {
-        score < 0.35 -> AppColors.HumanGreen
-        score < 0.65 -> AppColors.NeutralBlue
-        else -> AppColors.AIAmber
+        score < 0.35 -> if (darkTheme) AppColors.DarkHumanGreen else AppColors.HumanGreen
+        score < 0.65 -> if (darkTheme) AppColors.DarkNeutralBlue else AppColors.NeutralBlue
+        else -> if (darkTheme) AppColors.DarkAIAmber else AppColors.AIAmber
     }
 
     val trackColor = MaterialTheme.colorScheme.outlineVariant
@@ -179,12 +181,13 @@ fun VerdictCard(
     confidence: Double,
     modifier: Modifier = Modifier
 ) {
+    val darkTheme = isSystemInDarkTheme()
     val (bgColor, borderColor) = when (verdict) {
-        Verdict.LIKELY_HUMAN -> AppColors.HumanGreenBg to AppColors.HumanGreen
-        Verdict.POSSIBLY_HUMAN -> AppColors.HumanGreenBg.copy(alpha = 0.6f) to AppColors.HumanGreen.copy(alpha = 0.6f)
-        Verdict.INCONCLUSIVE -> AppColors.NeutralBlueBg to AppColors.NeutralBlue
-        Verdict.POSSIBLY_AI -> AppColors.AIAmberBg.copy(alpha = 0.6f) to AppColors.AIAmber.copy(alpha = 0.6f)
-        Verdict.LIKELY_AI -> AppColors.AIAmberBg to AppColors.AIAmber
+        Verdict.LIKELY_HUMAN -> if (darkTheme) AppColors.DarkHumanGreenBg to AppColors.DarkHumanGreen else AppColors.HumanGreenBg to AppColors.HumanGreen
+        Verdict.POSSIBLY_HUMAN -> if (darkTheme) AppColors.DarkHumanGreenBg.copy(alpha = 0.6f) to AppColors.DarkHumanGreen.copy(alpha = 0.6f) else AppColors.HumanGreenBg.copy(alpha = 0.6f) to AppColors.HumanGreen.copy(alpha = 0.6f)
+        Verdict.INCONCLUSIVE -> if (darkTheme) AppColors.DarkNeutralBlueBg to AppColors.DarkNeutralBlue else AppColors.NeutralBlueBg to AppColors.NeutralBlue
+        Verdict.POSSIBLY_AI -> if (darkTheme) AppColors.DarkAIAmberBg.copy(alpha = 0.6f) to AppColors.DarkAIAmber.copy(alpha = 0.6f) else AppColors.AIAmberBg.copy(alpha = 0.6f) to AppColors.AIAmber.copy(alpha = 0.6f)
+        Verdict.LIKELY_AI -> if (darkTheme) AppColors.DarkAIAmberBg to AppColors.DarkAIAmber else AppColors.AIAmberBg to AppColors.AIAmber
     }
 
     Column(
@@ -258,10 +261,11 @@ fun SignalCard(
     signal: DetectionSignal,
     modifier: Modifier = Modifier
 ) {
+    val darkTheme = isSystemInDarkTheme()
     val signalColor = when {
-        signal.score < 0.35 -> AppColors.HumanGreen
-        signal.score < 0.65 -> AppColors.NeutralBlue
-        else -> AppColors.AIAmber
+        signal.score < 0.35 -> if (darkTheme) AppColors.DarkHumanGreen else AppColors.HumanGreen
+        signal.score < 0.65 -> if (darkTheme) AppColors.DarkNeutralBlue else AppColors.NeutralBlue
+        else -> if (darkTheme) AppColors.DarkAIAmber else AppColors.AIAmber
     }
 
     Column(
@@ -574,12 +578,13 @@ fun VerdictCard(
     confidence: Double,
     modifier: Modifier = Modifier
 ) {
+    val darkTheme = isSystemInDarkTheme()
     val (bgColor, borderColor) = when (verdict) {
-        Verdict.LIKELY_HUMAN -> AppColors.HumanGreenBg to AppColors.HumanGreen
-        Verdict.POSSIBLY_HUMAN -> AppColors.HumanGreenBg.copy(alpha = 0.6f) to AppColors.HumanGreen.copy(alpha = 0.6f)
-        Verdict.INCONCLUSIVE -> AppColors.NeutralBlueBg to AppColors.NeutralBlue
-        Verdict.POSSIBLY_AI -> AppColors.AIAmberBg.copy(alpha = 0.6f) to AppColors.AIAmber.copy(alpha = 0.6f)
-        Verdict.LIKELY_AI -> AppColors.AIAmberBg to AppColors.AIAmber
+        Verdict.LIKELY_HUMAN -> if (darkTheme) AppColors.DarkHumanGreenBg to AppColors.DarkHumanGreen else AppColors.HumanGreenBg to AppColors.HumanGreen
+        Verdict.POSSIBLY_HUMAN -> if (darkTheme) AppColors.DarkHumanGreenBg.copy(alpha = 0.6f) to AppColors.DarkHumanGreen.copy(alpha = 0.6f) else AppColors.HumanGreenBg.copy(alpha = 0.6f) to AppColors.HumanGreen.copy(alpha = 0.6f)
+        Verdict.INCONCLUSIVE -> if (darkTheme) AppColors.DarkNeutralBlueBg to AppColors.DarkNeutralBlue else AppColors.NeutralBlueBg to AppColors.NeutralBlue
+        Verdict.POSSIBLY_AI -> if (darkTheme) AppColors.DarkAIAmberBg.copy(alpha = 0.6f) to AppColors.DarkAIAmber.copy(alpha = 0.6f) else AppColors.AIAmberBg.copy(alpha = 0.6f) to AppColors.AIAmber.copy(alpha = 0.6f)
+        Verdict.LIKELY_AI -> if (darkTheme) AppColors.DarkAIAmberBg to AppColors.DarkAIAmber else AppColors.AIAmberBg to AppColors.AIAmber
     }
 
     Column(

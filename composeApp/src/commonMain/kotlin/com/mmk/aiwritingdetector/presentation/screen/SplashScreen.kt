@@ -90,9 +90,9 @@ private fun SplashContent(
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
-                        AppColors.Ivory,
-                        AppColors.Cream,
-                        AppColors.Ivory
+                        MaterialTheme.colorScheme.background,
+                        MaterialTheme.colorScheme.surfaceVariant,
+                        MaterialTheme.colorScheme.background
                     )
                 )
             ),
@@ -116,7 +116,7 @@ private fun SplashContent(
                     fontSize = 36.sp,
                     fontWeight = FontWeight.Bold
                 ),
-                color = AppColors.Charcoal
+                color = MaterialTheme.colorScheme.onBackground
             )
             
             Text(
@@ -125,7 +125,7 @@ private fun SplashContent(
                     fontSize = 36.sp,
                     fontWeight = FontWeight.Bold
                 ),
-                color = AppColors.Teal
+                color = MaterialTheme.colorScheme.primary
             )
             
             Spacer(modifier = Modifier.height(16.dp))
@@ -134,7 +134,7 @@ private fun SplashContent(
             Text(
                 text = "Powered by PASETO Authentication",
                 style = MaterialTheme.typography.bodyMedium,
-                color = AppColors.Stone
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         
@@ -153,6 +153,8 @@ private fun SplashContent(
 @Composable
 private fun AnimatedLogo() {
     val infiniteTransition = rememberInfiniteTransition(label = "logo")
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val surfaceVariant = MaterialTheme.colorScheme.surfaceVariant
     
     val rotation by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -189,9 +191,9 @@ private fun AnimatedLogo() {
                 drawArc(
                     brush = Brush.sweepGradient(
                         colors = listOf(
-                            AppColors.Teal,
-                            AppColors.Teal.copy(alpha = 0.3f),
-                            AppColors.Teal
+                            primaryColor,
+                            primaryColor.copy(alpha = 0.3f),
+                            primaryColor
                         )
                     ),
                     startAngle = 0f,
@@ -203,7 +205,7 @@ private fun AnimatedLogo() {
             
             // Inner circle
             drawCircle(
-                color = AppColors.Cream,
+                color = surfaceVariant,
                 radius = radius - strokeWidth - 8.dp.toPx()
             )
             
@@ -213,7 +215,7 @@ private fun AnimatedLogo() {
             val iconRadius = radius * 0.35f
             
             drawCircle(
-                color = AppColors.Teal,
+                color = primaryColor,
                 radius = iconRadius,
                 center = Offset(centerX - iconRadius * 0.2f, centerY - iconRadius * 0.2f),
                 style = Stroke(width = 4.dp.toPx())
@@ -221,7 +223,7 @@ private fun AnimatedLogo() {
             
             // Handle of magnifying glass
             drawLine(
-                color = AppColors.Teal,
+                color = primaryColor,
                 start = Offset(centerX + iconRadius * 0.4f, centerY + iconRadius * 0.4f),
                 end = Offset(centerX + iconRadius * 1.2f, centerY + iconRadius * 1.2f),
                 strokeWidth = 4.dp.toPx(),
@@ -235,7 +237,7 @@ private fun AnimatedLogo() {
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Bold
             ),
-            color = AppColors.Teal
+            color = primaryColor
         )
     }
 }
@@ -243,6 +245,7 @@ private fun AnimatedLogo() {
 @Composable
 private fun PulsingDots(alpha: Float) {
     val infiniteTransition = rememberInfiniteTransition(label = "dots")
+    val primaryColor = MaterialTheme.colorScheme.primary
     
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -276,7 +279,7 @@ private fun PulsingDots(alpha: Float) {
                     .size(10.dp)
                     .scale(scale)
                     .alpha(dotAlpha)
-                    .background(AppColors.Teal, shape = androidx.compose.foundation.shape.CircleShape)
+                    .background(primaryColor, shape = androidx.compose.foundation.shape.CircleShape)
             )
         }
     }

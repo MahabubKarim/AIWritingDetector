@@ -77,7 +77,7 @@ class HomeScreen : Screen {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .background(AppColors.Ivory)
+                    .background(MaterialTheme.colorScheme.background)
             ) {
                 // Main content - reuse DetectorScreen content
                 DetectorScreenContent(
@@ -90,7 +90,7 @@ class HomeScreen : Screen {
                 DropdownMenu(
                     expanded = showProfileMenu,
                     onDismissRequest = { showProfileMenu = false },
-                    modifier = Modifier.background(Color.White)
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surface)
                 ) {
                     authState.user?.let { user ->
                         // User info header
@@ -103,12 +103,12 @@ class HomeScreen : Screen {
                                 text = user.displayName,
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = AppColors.Charcoal
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
                                 text = user.email,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = AppColors.Stone
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                         
@@ -122,7 +122,7 @@ class HomeScreen : Screen {
                                     Text(
                                         "Secure authentication",
                                         style = MaterialTheme.typography.bodySmall,
-                                        color = AppColors.Stone
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                             },
@@ -140,7 +140,7 @@ class HomeScreen : Screen {
                         
                         // Sign out
                         DropdownMenuItem(
-                            text = { Text("Sign Out", color = AppColors.Coral) },
+                            text = { Text("Sign Out", color = MaterialTheme.colorScheme.error) },
                             onClick = {
                                 showProfileMenu = false
                                 showSignOutDialog = true
@@ -149,7 +149,7 @@ class HomeScreen : Screen {
                                 Icon(
                                     Icons.AutoMirrored.Filled.ExitToApp,
                                     contentDescription = null,
-                                    tint = AppColors.Coral
+                                    tint = MaterialTheme.colorScheme.error
                                 )
                             }
                         )
@@ -171,7 +171,7 @@ class HomeScreen : Screen {
                             authViewModel.onIntent(AuthIntent.SignOut)
                         },
                         colors = ButtonDefaults.textButtonColors(
-                            contentColor = AppColors.Coral
+                            contentColor = MaterialTheme.colorScheme.error
                         )
                     ) {
                         Text("Sign Out")
@@ -205,14 +205,14 @@ private fun HomeTopBar(
                     modifier = Modifier
                         .size(36.dp)
                         .clip(CircleShape)
-                        .background(AppColors.Teal),
+                        .background(MaterialTheme.colorScheme.primary),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "AI",
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
                 
@@ -221,13 +221,13 @@ private fun HomeTopBar(
                         text = "AI Writing Detector",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = AppColors.Charcoal
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     user?.let {
                         Text(
                             text = "Welcome, ${it.displayName.split(" ").first()}",
                             style = MaterialTheme.typography.bodySmall,
-                            color = AppColors.Stone
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -239,7 +239,7 @@ private fun HomeTopBar(
                 Icon(
                     Icons.Default.History,
                     contentDescription = "History",
-                    tint = AppColors.Charcoal
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
             
@@ -251,25 +251,25 @@ private fun HomeTopBar(
                         modifier = Modifier
                             .size(32.dp)
                             .clip(CircleShape)
-                            .background(AppColors.Teal.copy(alpha = 0.2f)),
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = it.displayName.first().uppercase(),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
-                            color = AppColors.Teal
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                 } ?: Icon(
                     Icons.Default.AccountCircle,
                     contentDescription = "Profile",
-                    tint = AppColors.Charcoal
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = AppColors.Cream
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
     )
 }
@@ -298,7 +298,7 @@ private fun DetectorScreenContent(
     androidx.compose.foundation.layout.Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(AppColors.Ivory)
+            .background(MaterialTheme.colorScheme.background)
             .verticalScroll(scrollState)
             .padding(horizontal = 24.dp)
             .padding(bottom = 32.dp),
@@ -310,7 +310,7 @@ private fun DetectorScreenContent(
         Text(
             text = "Paste or type text below to analyze",
             style = MaterialTheme.typography.bodyLarge,
-            color = AppColors.Stone
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         
         Spacer(modifier = Modifier.height(24.dp))
@@ -416,7 +416,7 @@ private fun InputSection(
             Text(
                 text = "${10 - wordCount} more words needed",
                 style = MaterialTheme.typography.bodySmall,
-                color = AppColors.Stone,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 4.dp)
             )
         }
@@ -459,7 +459,7 @@ private fun ResultsSection(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(32.dp)
     ) {
-        HorizontalDivider(color = AppColors.Stone.copy(alpha = 0.3f))
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
 
         com.mmk.aiwritingdetector.presentation.components.ScoreGauge(
             score = result.overallScore,
@@ -477,8 +477,8 @@ private fun ResultsSection(
             onClick = onSave,
             enabled = canSave && !isSaving && !isSaved,
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (isSaved) AppColors.HumanGreen else AppColors.Teal,
-                disabledContainerColor = if (isSaved) AppColors.HumanGreen.copy(alpha = 0.8f) else AppColors.Stone.copy(alpha = 0.3f)
+                containerColor = if (isSaved) AppColors.HumanGreen else MaterialTheme.colorScheme.primary,
+                disabledContainerColor = if (isSaved) AppColors.HumanGreen.copy(alpha = 0.8f) else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
             ),
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier.fillMaxWidth()
@@ -486,7 +486,7 @@ private fun ResultsSection(
             if (isSaving) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(20.dp),
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     strokeWidth = 2.dp
                 )
                 Spacer(modifier = Modifier.width(8.dp))

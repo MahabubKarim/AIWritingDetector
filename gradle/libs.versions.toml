@@ -26,6 +26,8 @@ googleid = "1.2.0"
 # Firebase
 firebase-bom = "33.14.0"
 
+buildkonfig = "0.15.2"
+
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
@@ -96,4 +98,5 @@ composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "k
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 googleServices = { id = "com.google.gms.google-services", version = "4.4.2" }
+buildKonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }

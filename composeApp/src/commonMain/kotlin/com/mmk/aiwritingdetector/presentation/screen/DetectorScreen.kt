@@ -157,7 +157,7 @@ private fun HeaderSection(onHistoryClick: () -> Unit) {
             FilledTonalButton(
                 onClick = onHistoryClick,
                 colors = ButtonDefaults.filledTonalButtonColors(
-                    containerColor = AppColors.Cream
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
             ) {
                 Icon(
@@ -369,12 +369,15 @@ private fun SaveToHistoryButton(
     isSaved: Boolean,
     onSave: () -> Unit
 ) {
+    val darkTheme = androidx.compose.foundation.isSystemInDarkTheme()
+    val savedColor = if (darkTheme) AppColors.DarkHumanGreen else AppColors.HumanGreen
+    
     Button(
         onClick = onSave,
         enabled = canSave && !isSaving && !isSaved,
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (isSaved) AppColors.HumanGreen else AppColors.Teal,
-            disabledContainerColor = if (isSaved) AppColors.HumanGreen.copy(alpha = 0.8f) else AppColors.Stone.copy(alpha = 0.3f)
+            containerColor = if (isSaved) savedColor else MaterialTheme.colorScheme.primary,
+            disabledContainerColor = if (isSaved) savedColor.copy(alpha = 0.8f) else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
         ),
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier.fillMaxWidth()

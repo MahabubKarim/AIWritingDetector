@@ -95,9 +95,9 @@ private fun LoginContent(
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
-                        AppColors.Ivory,
-                        AppColors.Cream.copy(alpha = 0.5f),
-                        AppColors.Ivory
+                        MaterialTheme.colorScheme.background,
+                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                        MaterialTheme.colorScheme.background
                     )
                 )
             )
@@ -133,7 +133,7 @@ private fun LoginContent(
                             .fillMaxWidth()
                             .padding(bottom = 16.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = AppColors.Coral.copy(alpha = 0.1f)
+                            containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.1f)
                         ),
                         shape = RoundedCornerShape(12.dp)
                     ) {
@@ -144,11 +144,11 @@ private fun LoginContent(
                             Text(
                                 text = it,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = AppColors.Coral,
+                                color = MaterialTheme.colorScheme.error,
                                 modifier = Modifier.weight(1f)
                             )
                             TextButton(onClick = onClearError) {
-                                Text("Dismiss", color = AppColors.Coral)
+                                Text("Dismiss", color = MaterialTheme.colorScheme.error)
                             }
                         }
                     }
@@ -167,7 +167,7 @@ private fun LoginContent(
             Text(
                 text = "By signing in, you agree to our Terms of Service\nand Privacy Policy",
                 style = MaterialTheme.typography.bodySmall,
-                color = AppColors.Stone,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
             
@@ -197,8 +197,8 @@ private fun LogoSection() {
             .background(
                 Brush.radialGradient(
                     colors = listOf(
-                        AppColors.Teal,
-                        AppColors.Teal.copy(alpha = 0.8f)
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
                     )
                 )
             ),
@@ -210,7 +210,7 @@ private fun LogoSection() {
                 fontWeight = FontWeight.Bold,
                 fontSize = 36.sp
             ),
-            color = Color.White
+            color = MaterialTheme.colorScheme.onPrimary
         )
     }
 }
@@ -223,7 +223,7 @@ private fun WelcomeSection() {
         Text(
             text = "Welcome to",
             style = MaterialTheme.typography.titleLarge,
-            color = AppColors.Stone
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         
         Spacer(modifier = Modifier.height(8.dp))
@@ -233,7 +233,7 @@ private fun WelcomeSection() {
             style = MaterialTheme.typography.headlineMedium.copy(
                 fontWeight = FontWeight.Bold
             ),
-            color = AppColors.Charcoal
+            color = MaterialTheme.colorScheme.onSurface
         )
         
         Spacer(modifier = Modifier.height(16.dp))
@@ -241,7 +241,7 @@ private fun WelcomeSection() {
         Text(
             text = "Analyze text patterns to detect\nAI-generated content",
             style = MaterialTheme.typography.bodyLarge,
-            color = AppColors.Stone,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
         )
         
@@ -250,8 +250,8 @@ private fun WelcomeSection() {
         // PASETO badge
         Surface(
             shape = RoundedCornerShape(20.dp),
-            color = AppColors.Teal.copy(alpha = 0.1f),
-            border = BorderStroke(1.dp, AppColors.Teal.copy(alpha = 0.3f))
+            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f))
         ) {
             Row(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -266,7 +266,7 @@ private fun WelcomeSection() {
                 Text(
                     text = "Secured with PASETO",
                     style = MaterialTheme.typography.labelMedium,
-                    color = AppColors.Teal,
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.SemiBold
                 )
             }
@@ -293,9 +293,9 @@ private fun SignInSection(
                 .height(56.dp),
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.White,
-                contentColor = AppColors.Charcoal,
-                disabledContainerColor = Color.White.copy(alpha = 0.7f)
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                disabledContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
             ),
             elevation = ButtonDefaults.buttonElevation(
                 defaultElevation = 4.dp,
@@ -305,7 +305,7 @@ private fun SignInSection(
             if (isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(24.dp),
-                    color = AppColors.Teal,
+                    color = MaterialTheme.colorScheme.primary,
                     strokeWidth = 2.dp
                 )
                 Spacer(modifier = Modifier.width(12.dp))
@@ -352,16 +352,16 @@ private fun SignInSection(
         ) {
             HorizontalDivider(
                 modifier = Modifier.weight(1f),
-                color = AppColors.Stone.copy(alpha = 0.3f)
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
             )
             Text(
                 text = "  or  ",
                 style = MaterialTheme.typography.bodySmall,
-                color = AppColors.Stone
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             HorizontalDivider(
                 modifier = Modifier.weight(1f),
-                color = AppColors.Stone.copy(alpha = 0.3f)
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
             )
         }
         
@@ -372,9 +372,9 @@ private fun SignInSection(
                 .fillMaxWidth()
                 .height(56.dp),
             shape = RoundedCornerShape(16.dp),
-            border = BorderStroke(1.dp, AppColors.Stone.copy(alpha = 0.3f)),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)),
             colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = AppColors.Charcoal
+                contentColor = MaterialTheme.colorScheme.onSurface
             )
         ) {
             Icon(
@@ -390,3 +390,4 @@ private fun SignInSection(
         }
     }
 }
+

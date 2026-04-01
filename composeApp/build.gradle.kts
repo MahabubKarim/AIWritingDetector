@@ -1,6 +1,8 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import java.util.Properties
+import kotlin.apply
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -9,7 +11,16 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.googleServices)
+    alias(libs.plugins.buildKonfig)
     alias(libs.plugins.sqldelight)
+}
+
+sqldelight {
+    databases {
+        create("AIWritingDetectorDatabase") {
+            packageName.set("com.mmk.aiwritingdetector.data.db")
+        }
+    }
 }
 
 kotlin {
@@ -175,10 +186,18 @@ compose.desktop {
     }
 }
 
-sqldelight {
-    databases {
-        create("AIWritingDetectorDatabase") {
-            packageName.set("com.mmk.aiwritingdetector.data.db")
-        }
+val localProps = Properties().apply {
+    val f = rootProject.file("local.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
+}
+
+buildkonfig {
+    packageName = "com.mmk.aiwritingdetector.config"
+    defaultConfigs {
+        buildConfigField(
+            STRING,
+            "GOOGLE_WEB_CLIENT_ID",
+            localProps.getProperty("GOOGLE_WEB_CLIENT_ID", "")
+        )
     }
 }

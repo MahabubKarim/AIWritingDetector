@@ -46,6 +46,14 @@ object AppColors {
     val DarkSurfaceVariant = Color(0xFF302D2A)
     val DarkOnSurface = Color(0xFFE8E4DE)
     val DarkOnSurfaceVariant = Color(0xFFB5AEA4)
+
+    // Dark Semantic Colors
+    val DarkHumanGreen = Color(0xFF66BB6A)
+    val DarkHumanGreenBg = Color(0xFF1B2E1E)
+    val DarkAIAmber = Color(0xFFFFB74D)
+    val DarkAIAmberBg = Color(0xFF2E241B)
+    val DarkNeutralBlue = Color(0xFF64B5F6)
+    val DarkNeutralBlueBg = Color(0xFF1B252E)
 }
 
 private val LightColorScheme = lightColorScheme(
