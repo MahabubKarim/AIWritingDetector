@@ -14,6 +14,9 @@ A Kotlin Multiplatform (KMP) application that analyzes text to determine the lik
 - **Cross-platform**: Runs on Android, iOS, Desktop (macOS/Windows/Linux), and Web (WASM)
 - **Elegant UI**: Editorial-inspired design with warm color palette
 
+## Screenshots
+<img src="arts/5.jpeg" width="200" height="300"> <img src="arts/1.jpeg" width="200" height="300"> <img src="arts/4.jpeg" width="200" height="300"> <img src="arts/3.jpeg" width="200" height="300"> <img src="arts/2.jpeg" width="200" height="300">
+
 ## Detection Signals
 
 The analyzer looks for patterns commonly found in AI-generated text:
