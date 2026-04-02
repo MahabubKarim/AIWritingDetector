@@ -1,14 +1,26 @@
-@file:OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
-
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import java.util.Properties
+import kotlin.apply
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.googleServices)
+    alias(libs.plugins.buildKonfig)
     alias(libs.plugins.sqldelight)
+}
+
+sqldelight {
+    databases {
+        create("AIWritingDetectorDatabase") {
+            packageName.set("com.mmk.aiwritingdetector.data.db")
+        }
+    }
 }
 
 kotlin {
@@ -29,6 +41,7 @@ kotlin {
 
     jvm("desktop")
 
+    @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         outputModuleName = "composeApp"
         browser {
@@ -41,27 +54,44 @@ kotlin {
 
     sourceSets {
         val desktopMain by getting
-        val wasmJsMain by getting
 
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
             implementation(libs.sqldelight.android.driver)
+            implementation(libs.ktor.client.okhttp)
             implementation(libs.koin.android)
+
+            // Google Sign-In
+            implementation(libs.androidx.credentials)
+            implementation(libs.androidx.credentials.play.services)
+            implementation(libs.googleid)
+
+            // Firebase (Android only - BOM managed)
+            implementation(project.dependencies.platform(libs.firebase.bom))
+            implementation(libs.firebase.auth)
+            implementation(libs.firebase.firestore)
+            implementation(libs.firebase.analytics)
         }
 
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.materialIconsExtended)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+            implementation(libs.runtime)
+            implementation(libs.foundation)
+            implementation(libs.material3)
+            implementation(libs.compose.material.icons.extended)
+            implementation(libs.ui)
+            implementation(libs.components.resources)
+            implementation(libs.ui.tooling.preview)
 
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.serialization.json)
+
+            // Ktor
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
 
             // Koin
             implementation(libs.koin.core)
@@ -84,14 +114,19 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.sqldelight.sqlite.driver)
+            implementation(libs.ktor.client.okhttp)
         }
 
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)
+            implementation(libs.ktor.client.darwin)
         }
 
         wasmJsMain.dependencies {
             implementation(libs.sqldelight.web.worker.driver)
+            implementation(libs.ktor.client.js)
+            implementation(npm("@cashapp/sqldelight-sqljs-worker", "2.3.2"))
+            implementation(npm("sql.js", "1.12.0"))
         }
     }
 }
@@ -151,10 +186,18 @@ compose.desktop {
     }
 }
 
-sqldelight {
-    databases {
-        create("AIWritingDetectorDatabase") {
-            packageName.set("com.mmk.aiwritingdetector.data.db")
-        }
+val localProps = Properties().apply {
+    val f = rootProject.file("local.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
+}
+
+buildkonfig {
+    packageName = "com.mmk.aiwritingdetector.config"
+    defaultConfigs {
+        buildConfigField(
+            STRING,
+            "GOOGLE_WEB_CLIENT_ID",
+            localProps.getProperty("GOOGLE_WEB_CLIENT_ID", "")
+        )
     }
 }

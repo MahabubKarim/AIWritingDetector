@@ -2,15 +2,22 @@ package com.mmk.aiwritingdetector
 
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.transitions.FadeTransition
+import cafe.adriel.voyager.transitions.SlideTransition
 import com.mmk.aiwritingdetector.di.appModules
-import com.mmk.aiwritingdetector.presentation.screen.DetectorScreen
+import com.mmk.aiwritingdetector.presentation.screen.SplashScreen
 import com.mmk.aiwritingdetector.presentation.theme.AppTheme
 import org.koin.compose.KoinApplication
 import org.koin.dsl.KoinAppDeclaration
 
 /**
  * Main application entry point.
+ *
+ * Navigation Flow:
+ * SplashScreen → (check auth) → LoginScreen or HomeScreen
+ *                                    ↓
+ *                              DetectorScreen (embedded)
+ *                                    ↓
+ *                              HistoryScreen
  */
 @Composable
 fun App(koinAppDeclaration: KoinAppDeclaration? = null) {
@@ -22,11 +29,12 @@ fun App(koinAppDeclaration: KoinAppDeclaration? = null) {
     ) {
         AppTheme {
             Navigator(
-                screen = DetectorScreen(),
+                screen = SplashScreen(),
                 content = { navigator ->
-                    FadeTransition(navigator = navigator)
+                    SlideTransition(navigator = navigator)
                 }
             )
         }
     }
 }
+

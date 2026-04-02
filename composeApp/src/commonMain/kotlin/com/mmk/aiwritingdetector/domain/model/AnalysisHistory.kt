@@ -23,7 +23,7 @@ data class AnalysisHistory(
      */
     fun getFormattedDate(): String {
         val epochSeconds = createdAt.epochSeconds
-        val date = kotlinx.datetime.Instant.fromEpochSeconds(epochSeconds)
+        val date = Instant.fromEpochSeconds(epochSeconds)
         return date.toString().take(16).replace("T", " ")
     }
     

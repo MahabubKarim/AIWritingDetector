@@ -9,6 +9,7 @@ A Kotlin Multiplatform (KMP) application that analyzes text to determine the lik
 ## Features
 
 - **Multidimensional Analysis**: Evaluates vocabulary, sentence structure, rhetorical patterns, and statistical properties
+- **Authentication**: Google Sign-In with PASETO (Platform-Agnostic SEcurity TOkens) tokens across all platforms
 - **Real-time Stats**: Live character and word count as you type
 - **Detailed Reports**: Comprehensive breakdown of detection signals with evidence
 - **Cross-platform**: Runs on Android, iOS, Desktop (macOS/Windows/Linux), and Web (WASM)
@@ -40,6 +41,27 @@ The analyzer looks for patterns commonly found in AI-generated text:
 - Android Studio Hedgehog+ (for Android)
 - Xcode 15+ (for iOS)
 
+### Configuration
+
+To enable Google Sign-In, you need to set up a Google Web Client ID.
+
+#### Create Google Web Client ID
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
+2. Select your project (the same one used for Firebase).
+3. Navigate to **APIs & Services** > **Credentials**.
+4. If you haven't configured the OAuth consent screen, complete that first under the **OAuth consent screen** tab.
+5. Click **+ CREATE CREDENTIALS** and select **OAuth client ID**.
+6. Choose **Web application** as the **Application type**.
+7. Name your client (e.g., `AI Writing Detector Web`).
+8. Add **Authorized JavaScript origins** (e.g., `http://localhost:8080` for local web development).
+9. Click **Create** and copy the **Client ID**.
+
+#### Update local.properties
+Add the copied Client ID to your `local.properties` file in the project root:
+```properties
+GOOGLE_WEB_CLIENT_ID=your_google_web_client_id_here
+```
+
 ### Run Android
 
 ```bash
@@ -66,17 +88,26 @@ Open `iosApp/iosApp.xcodeproj` in Xcode and run on a simulator or device.
 
 ## Architecture
 
+The project follows Clean Architecture principles with a multi-layered structure:
+
 ```
-├── domain/
-│   ├── model/          # Data models (AnalysisResult, TextStats, etc.)
+├── data/               # Data layer (Repositories, DB, Auth)
+│   ├── auth/           # Auth implementations (Google, Token Storage)
+│   ├── db/             # SQLDelight database & platform drivers
+│   └── repository/     # Repository implementations
+├── domain/             # Business logic layer
 │   ├── analyzer/       # Core analysis logic & pattern dictionaries
-│   └── usecase/        # Business logic (AnalyzeTextUseCase)
-├── presentation/
-│   ├── screen/         # Compose screens
-│   ├── viewmodel/      # MVI ViewModels
+│   ├── auth/           # Auth interfaces & domain models
+│   ├── model/          # Domain models (AnalysisResult, TextStats)
+│   ├── usecase/        # Business logic & Interactors
+│   └── util/           # Shared domain utilities (NumberFormat)
+├── presentation/       # UI layer (Compose Multiplatform)
 │   ├── components/     # Reusable UI components
-│   └── theme/          # Colors, typography, theming
-└── di/                 # Koin dependency injection modules
+│   ├── screen/         # UI screens (Login, Splash, Detector, etc.)
+│   ├── theme/          # Design system (Colors, Typography)
+│   └── viewmodel/      # MVI ViewModels
+├── di/                 # Koin dependency injection modules
+└── App.kt              # Main Compose entry point
 ```
 
 ### Tech Stack

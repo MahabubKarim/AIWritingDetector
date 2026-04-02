@@ -3,6 +3,7 @@ package com.mmk.aiwritingdetector.presentation.screen
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -27,6 +28,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.mmk.aiwritingdetector.domain.model.AnalysisHistory
 import com.mmk.aiwritingdetector.domain.model.Verdict
+import com.mmk.aiwritingdetector.domain.util.format
 import com.mmk.aiwritingdetector.presentation.components.*
 import com.mmk.aiwritingdetector.presentation.theme.AppColors
 import com.mmk.aiwritingdetector.presentation.viewmodel.HistoryEffect
@@ -66,7 +68,7 @@ class HistoryScreen : Screen {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(AppColors.Ivory)
+                .background(MaterialTheme.colorScheme.background)
         ) {
             // Header
             HistoryHeader(
@@ -88,7 +90,7 @@ class HistoryScreen : Screen {
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator(color = AppColors.Teal)
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                     }
                 }
                 state.historyList.isEmpty() -> {
@@ -139,7 +141,7 @@ private fun HistoryHeader(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = AppColors.Cream,
+        color = MaterialTheme.colorScheme.surfaceVariant,
         shadowElevation = 2.dp
     ) {
         Row(
@@ -154,23 +156,23 @@ private fun HistoryHeader(
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Back",
-                        tint = AppColors.Charcoal
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
-
+                
                 Spacer(modifier = Modifier.width(8.dp))
-
+                
                 Column {
                     Text(
                         text = "Analysis History",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
-                        color = AppColors.Charcoal
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = "$itemCount saved ${if (itemCount == 1) "analysis" else "analyses"}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = AppColors.Stone
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -179,7 +181,7 @@ private fun HistoryHeader(
                 TextButton(
                     onClick = onClearAll,
                     colors = ButtonDefaults.textButtonColors(
-                        contentColor = AppColors.Coral
+                        contentColor = MaterialTheme.colorScheme.error
                     )
                 ) {
                     Icon(
@@ -211,7 +213,7 @@ private fun SearchBar(
             Icon(
                 imageVector = Icons.Default.Search,
                 contentDescription = null,
-                tint = AppColors.Stone
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         },
         trailingIcon = {
@@ -220,17 +222,17 @@ private fun SearchBar(
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = "Clear",
-                        tint = AppColors.Stone
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
         },
         shape = RoundedCornerShape(12.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = AppColors.Teal,
-            unfocusedBorderColor = AppColors.Stone.copy(alpha = 0.3f),
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
+            focusedContainerColor = MaterialTheme.colorScheme.surface,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surface
         ),
         singleLine = true
     )
@@ -254,7 +256,7 @@ private fun HistoryList(
                 onDelete = { onItemDelete(item) }
             )
         }
-
+        
         item {
             Spacer(modifier = Modifier.height(80.dp))
         }
@@ -267,12 +269,15 @@ private fun HistoryItemCard(
     onClick: () -> Unit,
     onDelete: () -> Unit
 ) {
+    val darkTheme = isSystemInDarkTheme()
+    val verdictColor = item.verdict.getColor(darkTheme)
+    
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
@@ -291,23 +296,23 @@ private fun HistoryItemCard(
                     modifier = Modifier
                         .size(48.dp)
                         .clip(CircleShape)
-                        .background(item.verdict.getColor().copy(alpha = 0.15f)),
+                        .background(verdictColor.copy(alpha = 0.15f)),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "${item.getScorePercentage()}%",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = item.verdict.getColor()
+                        color = verdictColor
                     )
                 }
-
+                
                 Spacer(modifier = Modifier.height(4.dp))
-
+                
                 Text(
                     text = item.verdict.getShortLabel(),
                     style = MaterialTheme.typography.labelSmall,
-                    color = item.verdict.getColor()
+                    color = verdictColor
                 )
             }
 
@@ -320,26 +325,26 @@ private fun HistoryItemCard(
                 Text(
                     text = item.textPreview,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = AppColors.Charcoal,
+                    color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
-
+                
                 Spacer(modifier = Modifier.height(8.dp))
-
+                
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     StatChip(label = "${item.wordCount} words")
                     StatChip(label = "${item.sentenceCount} sentences")
                 }
-
+                
                 Spacer(modifier = Modifier.height(4.dp))
-
+                
                 Text(
                     text = item.getFormattedDate(),
                     style = MaterialTheme.typography.labelSmall,
-                    color = AppColors.Stone
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
@@ -351,7 +356,7 @@ private fun HistoryItemCard(
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete",
-                    tint = AppColors.Stone,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -363,12 +368,12 @@ private fun HistoryItemCard(
 private fun StatChip(label: String) {
     Surface(
         shape = RoundedCornerShape(4.dp),
-        color = AppColors.Stone.copy(alpha = 0.1f)
+        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f)
     ) {
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall,
-            color = AppColors.Stone,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
         )
     }
@@ -383,12 +388,12 @@ private fun HistoryDetailView(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(AppColors.Ivory)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         // Detail header
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = AppColors.Cream
+            color = MaterialTheme.colorScheme.surfaceVariant
         ) {
             Row(
                 modifier = Modifier
@@ -401,22 +406,22 @@ private fun HistoryDetailView(
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Back",
-                        tint = AppColors.Charcoal
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
-
+                
                 Text(
                     text = "Analysis Details",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = AppColors.Charcoal
+                    color = MaterialTheme.colorScheme.onSurface
                 )
-
+                
                 IconButton(onClick = onDelete) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = "Delete",
-                        tint = AppColors.Coral
+                        tint = MaterialTheme.colorScheme.error
                     )
                 }
             }
@@ -441,20 +446,20 @@ private fun HistoryDetailView(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
                             text = "Original Text",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = AppColors.Charcoal
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = item.fullText,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = AppColors.Charcoal.copy(alpha = 0.8f)
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                         )
                     }
                 }
@@ -471,15 +476,15 @@ private fun HistoryDetailView(
 
             // Stats
             item {
-                val avgWordsPerSentence = if (item.sentenceCount > 0)
-                    item.wordCount.toDouble() / item.sentenceCount
+                val avgWordsPerSentence = if (item.sentenceCount > 0) 
+                    item.wordCount.toDouble() / item.sentenceCount 
                 else 0.0
-
+                    
                 StatsGrid(
                     items = listOf(
                         "Words" to item.wordCount.toString(),
                         "Sentences" to item.sentenceCount.toString(),
-                        "Avg. Words/Sentence" to "%.1f".format(avgWordsPerSentence),
+                        "Avg. Words/Sentence" to avgWordsPerSentence.format(1),
                         "AI Score" to "${item.getScorePercentage()}%"
                     )
                 )
@@ -520,13 +525,13 @@ private fun EmptyHistoryState() {
                 text = "No analyses yet",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = AppColors.Charcoal
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "Analyzed texts will appear here",
                 style = MaterialTheme.typography.bodyMedium,
-                color = AppColors.Stone
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
@@ -544,7 +549,7 @@ private fun DeleteConfirmationDialog(
         confirmButton = {
             TextButton(
                 onClick = onConfirm,
-                colors = ButtonDefaults.textButtonColors(contentColor = AppColors.Coral)
+                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
             ) {
                 Text("Delete")
             }
@@ -569,7 +574,7 @@ private fun ClearAllConfirmationDialog(
         confirmButton = {
             TextButton(
                 onClick = onConfirm,
-                colors = ButtonDefaults.textButtonColors(contentColor = AppColors.Coral)
+                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
             ) {
                 Text("Clear All")
             }
@@ -583,12 +588,13 @@ private fun ClearAllConfirmationDialog(
 }
 
 // Extension functions
-private fun Verdict.getColor(): Color = when (this) {
-    Verdict.LIKELY_HUMAN -> AppColors.HumanGreen
-    Verdict.POSSIBLY_HUMAN -> AppColors.HumanGreen.copy(alpha = 0.7f)
-    Verdict.INCONCLUSIVE -> AppColors.NeutralBlue
-    Verdict.POSSIBLY_AI -> AppColors.AIAmber
-    Verdict.LIKELY_AI -> AppColors.Coral
+@Composable
+private fun Verdict.getColor(darkTheme: Boolean): Color = when (this) {
+    Verdict.LIKELY_HUMAN -> if (darkTheme) AppColors.DarkHumanGreen else AppColors.HumanGreen
+    Verdict.POSSIBLY_HUMAN -> (if (darkTheme) AppColors.DarkHumanGreen else AppColors.HumanGreen).copy(alpha = 0.7f)
+    Verdict.INCONCLUSIVE -> if (darkTheme) AppColors.DarkNeutralBlue else AppColors.NeutralBlue
+    Verdict.POSSIBLY_AI -> if (darkTheme) AppColors.DarkAIAmber else AppColors.AIAmber
+    Verdict.LIKELY_AI -> MaterialTheme.colorScheme.error
 }
 
 private fun Verdict.getShortLabel(): String = when (this) {

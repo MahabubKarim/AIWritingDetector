@@ -19,6 +19,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.mmk.aiwritingdetector.domain.model.AnalysisResult
+import com.mmk.aiwritingdetector.domain.util.format
 import com.mmk.aiwritingdetector.presentation.components.*
 import com.mmk.aiwritingdetector.presentation.theme.AppColors
 import com.mmk.aiwritingdetector.presentation.theme.AppTypography
@@ -156,7 +157,7 @@ private fun HeaderSection(onHistoryClick: () -> Unit) {
             FilledTonalButton(
                 onClick = onHistoryClick,
                 colors = ButtonDefaults.filledTonalButtonColors(
-                    containerColor = AppColors.Cream
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
             ) {
                 Icon(
@@ -327,8 +328,8 @@ private fun ResultsSection(
                 "Words" to result.textStats.wordCount.toString(),
                 "Sentences" to result.textStats.sentenceCount.toString(),
                 "Paragraphs" to result.textStats.paragraphCount.toString(),
-                "Avg. Words/Sentence" to "%.1f".format(result.textStats.avgWordsPerSentence),
-                "Vocabulary Diversity" to "%.0f%%".format(result.textStats.uniqueWordRatio * 100)
+                "Avg. Words/Sentence" to result.textStats.avgWordsPerSentence.format(1),
+                "Vocabulary Diversity" to "${(result.textStats.uniqueWordRatio * 100).format(0)}%"
             )
         )
 
@@ -368,12 +369,15 @@ private fun SaveToHistoryButton(
     isSaved: Boolean,
     onSave: () -> Unit
 ) {
+    val darkTheme = androidx.compose.foundation.isSystemInDarkTheme()
+    val savedColor = if (darkTheme) AppColors.DarkHumanGreen else AppColors.HumanGreen
+    
     Button(
         onClick = onSave,
         enabled = canSave && !isSaving && !isSaved,
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (isSaved) AppColors.HumanGreen else AppColors.Teal,
-            disabledContainerColor = if (isSaved) AppColors.HumanGreen.copy(alpha = 0.8f) else AppColors.Stone.copy(alpha = 0.3f)
+            containerColor = if (isSaved) savedColor else MaterialTheme.colorScheme.primary,
+            disabledContainerColor = if (isSaved) savedColor.copy(alpha = 0.8f) else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
         ),
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier.fillMaxWidth()
